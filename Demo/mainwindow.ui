@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>452</width>
+    <height>404</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QStackedWidget" name="paginaInicial">
+    <property name="geometry">
+     <rect>
+      <x>70</x>
+      <y>40</y>
+      <width>281</width>
+      <height>331</height>
+     </rect>
+    </property>
+    <property name="currentIndex">
+     <number>0</number>
+    </property>
+    <widget class="QWidget" name="paginaControle">
+     <widget class="QPushButton" name="botao_controle">
+      <property name="geometry">
+       <rect>
+        <x>100</x>
+        <y>90</y>
+        <width>75</width>
+        <height>24</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Controle</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="botao_cadastro">
+      <property name="geometry">
+       <rect>
+        <x>100</x>
+        <y>150</y>
+        <width>75</width>
+        <height>24</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Cadastro</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="botao_config">
+      <property name="geometry">
+       <rect>
+        <x>100</x>
+        <y>220</y>
+        <width>81</width>
+        <height>24</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Configuração</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label">
+      <property name="geometry">
+       <rect>
+        <x>80</x>
+        <y>30</y>
+        <width>111</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Pagina de Controle</string>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="paginaCadastro"/>
+   </widget>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
