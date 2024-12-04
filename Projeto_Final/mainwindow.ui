@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>400</width>
+    <height>300</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Sistema de Gerenciamento</string>
+  </property>
+  <centralwidget>
+   <widget class="QStackedWidget" name="stackedWidget">
+    <widget name="paginaInicial">
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <item>
+       <widget class="QPushButton" name="botao_controle">
+        <property name="text">
+         <string>Controle</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="botao_cadastro">
+        <property name="text">
+         <string>Cadastro</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="botao_config">
+        <property name="text">
+         <string>Configuração</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+    <widget name="paginaControle">
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="QLabel" name="labelControle">
+        <property name="text">
+         <string>Página de Controle</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="botaoVoltarControle">
+        <property name="text">
+         <string>Voltar</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+    <widget name="paginaCadastro">
+     <layout class="QVBoxLayout" name="verticalLayout_3">
+      <item>
+       <widget class="QLabel" name="labelCadastro">
+        <property name="text">
+         <string>Página de Cadastro</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="botaoVoltarCadastro">
+        <property name="text">
+         <string>Voltar</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+    <widget name="paginaConfig">
+     <layout class="QVBoxLayout" name="verticalLayout_4">
+      <item>
+       <widget class="QLabel" name="labelConfig">
+        <property name="text">
+         <string>Página de Configuração</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="botaoVoltarConfig">
+        <property name="text">
+         <string>Voltar</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </widget>
+  </centralwidget>
+ </widget>
+ <connections/>
+</ui>
