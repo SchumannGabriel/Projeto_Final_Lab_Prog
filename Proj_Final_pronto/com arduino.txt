@@ -1,0 +1,214 @@
+#include <QApplication>
+#include <QMainWindow>
+#include <QPushButton>
+#include <QStackedWidget>
+#include <QVBoxLayout>
+#include <QHBoxLayout>
+#include <QLabel>
+#include <QTableWidget>
+#include <QTableWidgetItem>
+#include <QHeaderView>
+#include <QInputDialog>
+#include <QMessageBox>
+#include <QStringList>
+#include <QSerialPort>
+#include <QSerialPortInfo>
+#include <QDebug>
+
+// Função para detectar a porta do Arduino
+QString detectarPortaArduino() {
+    foreach (const QSerialPortInfo &info, QSerialPortInfo::availablePorts()) {
+        if (info.description().contains("Arduino", Qt::CaseInsensitive)) {
+            return info.portName();  
+        }
+    }
+    return "";  
+}
+
+// Função para acessar as páginas com senha
+void acessarComSenha(QStackedWidget *stackedWidget, int paginaIndex, const QString &senhaCorreta) {
+    bool ok;
+    QString senha = QInputDialog::getText(nullptr, "Senha Requerida",
+                                          "Digite a senha:", QLineEdit::Password, "", &ok);
+    if (ok && senha == senhaCorreta) {
+        stackedWidget->setCurrentIndex(paginaIndex);
+    } else if (ok) {
+        QMessageBox::warning(nullptr, "Senha Incorreta", "Senha inválida. Tente novamente.");
+    }
+}
+
+// Função para adicionar um usuário à tabela
+void adicionarUsuario(QTableWidget *tabelaCadastro) {
+    bool ok;
+    QString nome = QInputDialog::getText(nullptr, "Adicionar Usuário",
+                                         "Digite o nome do usuário:", QLineEdit::Normal, "", &ok);
+    if (!ok || nome.isEmpty()) return;
+
+    QString nivel = QInputDialog::getItem(nullptr, "Adicionar Usuário",
+                                          "Selecione o nível de acesso:",
+                                          {"Administrador", "Usuário"}, 0, false, &ok);
+    if (!ok) return;
+
+    QString uid = QInputDialog::getText(nullptr, "Adicionar Usuário",
+                                        "Digite o UID do cartão:", QLineEdit::Normal, "", &ok);
+    if (!ok || uid.isEmpty()) return;
+
+    int row = tabelaCadastro->rowCount();
+    tabelaCadastro->insertRow(row);
+    tabelaCadastro->setItem(row, 0, new QTableWidgetItem(nome));
+    tabelaCadastro->setItem(row, 1, new QTableWidgetItem(nivel));
+    tabelaCadastro->setItem(row, 2, new QTableWidgetItem(uid));
+
+    QMessageBox::information(nullptr, "Usuário Adicionado", "Usuário adicionado com sucesso!");
+}
+
+// Função para excluir um usuário da tabela
+void excluirUsuario(QTableWidget *tabelaCadastro) {
+    int row = tabelaCadastro->currentRow();
+    if (row < 0) {
+        QMessageBox::warning(nullptr, "Erro", "Por favor, selecione um usuário para excluir.");
+        return;
+    }
+
+    tabelaCadastro->removeRow(row);
+    QMessageBox::information(nullptr, "Usuário Excluído", "Usuário excluído com sucesso!");
+}
+
+int main(int argc, char *argv[]) {
+    QApplication a(argc, argv);
+
+    // Janela principal
+    QMainWindow mainWindow;
+    mainWindow.setWindowTitle("Sistema de Controle");
+
+    // Criando o QStackedWidget para gerenciar as páginas
+    QStackedWidget *stackedWidget = new QStackedWidget;
+
+    // Página Inicial com os botões
+    QWidget *paginaInicial = new QWidget;
+    QVBoxLayout *layoutInicial = new QVBoxLayout(paginaInicial);
+
+    QPushButton *botao_controle = new QPushButton("Controle");
+    QPushButton *botao_cadastro = new QPushButton("Cadastro");
+    QPushButton *botao_config = new QPushButton("Configuração");
+
+    botao_controle->setStyleSheet("background-color: #4CAF50; color: white; border-radius: 5px; padding: 10px;");
+    botao_cadastro->setStyleSheet("background-color: #008CBA; color: white; border-radius: 5px; padding: 10px;");
+    botao_config->setStyleSheet("background-color: #f44336; color: white; border-radius: 5px; padding: 10px;");
+    
+    layoutInicial->addWidget(botao_controle);
+    layoutInicial->addWidget(botao_cadastro);
+    layoutInicial->addWidget(botao_config);
+    paginaInicial->setStyleSheet("background-color: #f0f0f0; padding: 20px;");
+
+    // Página de Controle
+    QWidget *paginaControle = new QWidget;
+    QVBoxLayout *layoutControle = new QVBoxLayout(paginaControle);
+    QLabel *labelControle = new QLabel("Página de Controle");
+    QPushButton *botaoVoltarControle = new QPushButton("Voltar");
+    botaoVoltarControle->setStyleSheet("background-color: #9E9E9E; color: white; border-radius: 5px; padding: 10px;");
+    layoutControle->addWidget(labelControle);
+    layoutControle->addWidget(botaoVoltarControle);
+    paginaControle->setStyleSheet("background-color: #f0f0f0; padding: 20px;");
+
+    // Página de Cadastro
+    QWidget *paginaCadastro = new QWidget;
+    QVBoxLayout *layoutCadastro = new QVBoxLayout(paginaCadastro);
+
+    QLabel *labelCadastro = new QLabel("Página de Cadastro");
+    QTableWidget *tabelaCadastro = new QTableWidget(0, 3);
+    QStringList cabecalhos = {"Nome do Usuário", "Nível de Acesso", "UID do Cartão"};
+    tabelaCadastro->setHorizontalHeaderLabels(cabecalhos);
+    tabelaCadastro->horizontalHeader()->setStretchLastSection(true);
+    tabelaCadastro->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+
+    QPushButton *botaoAddUsuario = new QPushButton("Adicionar Usuário");
+    QPushButton *botaoExcluirUsuario = new QPushButton("Excluir Usuário");
+    QPushButton *botaoVoltarCadastro = new QPushButton("Voltar");
+
+    botaoAddUsuario->setStyleSheet("background-color: #4CAF50; color: white; border-radius: 5px; padding: 10px;");
+    botaoExcluirUsuario->setStyleSheet("background-color: #f44336; color: white; border-radius: 5px; padding: 10px;");
+    botaoVoltarCadastro->setStyleSheet("background-color: #9E9E9E; color: white; border-radius: 5px; padding: 10px;");
+
+    layoutCadastro->addWidget(labelCadastro);
+    layoutCadastro->addWidget(tabelaCadastro);
+    layoutCadastro->addWidget(botaoAddUsuario);
+    layoutCadastro->addWidget(botaoExcluirUsuario);
+    layoutCadastro->addWidget(botaoVoltarCadastro);
+    paginaCadastro->setStyleSheet("background-color: #f0f0f0; padding: 20px;");
+
+    // Página de Configuração
+    QWidget *paginaConfig = new QWidget;
+    QVBoxLayout *layoutConfig = new QVBoxLayout(paginaConfig);
+    QLabel *labelConfig = new QLabel("Página de Configuração");
+    QPushButton *botaoVoltarConfig = new QPushButton("Voltar");
+    botaoVoltarConfig->setStyleSheet("background-color: #9E9E9E; color: white; border-radius: 5px; padding: 10px;");
+    layoutConfig->addWidget(labelConfig);
+    layoutConfig->addWidget(botaoVoltarConfig);
+    paginaConfig->setStyleSheet("background-color: #f0f0f0; padding: 20px;");
+
+    // Adicionando as páginas ao QStackedWidget
+    stackedWidget->addWidget(paginaInicial);    // Página 0
+    stackedWidget->addWidget(paginaControle);   // Página 1
+    stackedWidget->addWidget(paginaCadastro);   // Página 2
+    stackedWidget->addWidget(paginaConfig);     // Página 3
+
+    // Detecta a porta do Arduino
+    QString portaArduino = detectarPortaArduino();
+    if (portaArduino.isEmpty()) {
+        qWarning() << "Arduino não encontrado!";
+    } else {
+        // Configura a comunicação serial com o Arduino
+        QSerialPort arduino;
+        arduino.setPortName(portaArduino);
+        arduino.setBaudRate(QSerialPort::Baud9600);
+        arduino.setDataBits(QSerialPort::Data8);
+        arduino.setParity(QSerialPort::NoParity);
+        arduino.setStopBits(QSerialPort::OneStop);
+        arduino.setFlowControl(QSerialPort::NoFlowControl);
+
+        if (arduino.open(QIODevice::ReadWrite)) {
+            qDebug() << "Conectado ao Arduino na porta" << portaArduino;
+        } else {
+            qWarning() << "Falha ao conectar ao Arduino!";
+        }
+    }
+
+    // Configurando a página inicial como a página exibida
+    mainWindow.setCentralWidget(stackedWidget);
+
+    // Conexões dos botões
+    QObject::connect(botao_controle, &QPushButton::clicked, [=]() {
+        stackedWidget->setCurrentIndex(1); // Página de Controle
+    });
+
+    QObject::connect(botao_cadastro, &QPushButton::clicked, [=]() {
+        acessarComSenha(stackedWidget, 2, "admin123"); // Página de Cadastro com senha
+    });
+
+    QObject::connect(botao_config, &QPushButton::clicked, [=]() {
+        acessarComSenha(stackedWidget, 3, "admin123"); // Página de Configuração com senha
+    });
+
+    QObject::connect(botaoVoltarControle, &QPushButton::clicked, [=]() {
+        stackedWidget->setCurrentIndex(0); // Página Inicial
+    });
+    QObject::connect(botaoVoltarCadastro, &QPushButton::clicked, [=]() {
+        stackedWidget->setCurrentIndex(0); // Página Inicial
+    });
+    QObject::connect(botaoVoltarConfig, &QPushButton::clicked, [=]() {
+        stackedWidget->setCurrentIndex(0); // Página Inicial
+    });
+
+    QObject::connect(botaoAddUsuario, &QPushButton::clicked, [=]() {
+        adicionarUsuario(tabelaCadastro);
+    });
+    QObject::connect(botaoExcluirUsuario, &QPushButton::clicked, [=]() {
+        excluirUsuario(tabelaCadastro);
+    });
+
+    mainWindow.resize(600, 400);
+    mainWindow.show();
+
+    return a.exec();
+}
